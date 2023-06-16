@@ -1,38 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Text))]
 public class TimerText : MonoBehaviour
 {
-    [SerializeField] private Timer timer;
     private Text timerText;
 
-    private void Awake()
+    private void Start()
     {
         timerText = GetComponent<Text>();
     }
 
-    private void Update()
-    {
-        TimeToText();
-    }
-
     private void OnEnable()
     {
-        Timer.OnTimeOver += ShowGameOverText;
+        Timer.OnTimerWorking += TimeToText;
+        Timer.OnTimerFinish += SetTimeOverText;
     }
 
     private void OnDisable()
     {
-        Timer.OnTimeOver -= ShowGameOverText;
+        Timer.OnTimerWorking -= TimeToText;
+        Timer.OnTimerFinish -= SetTimeOverText;
     }
 
-    private void TimeToText()
+    private void TimeToText(float timeRemaining, float duration)
     {
-        if (!timer.IsTimeOver)
-        timerText.text = ConvertTimeToString(timer.TimeRemaining);
+        if (timeRemaining is not 0f && timeRemaining <= duration)
+        {
+            timerText.text = ConvertTimeToString(timeRemaining);
+        }
     }
 
     private string ConvertTimeToString(float timeInSeconds)
@@ -43,8 +39,8 @@ public class TimerText : MonoBehaviour
         return formattedTime;
     }
 
-    private void ShowGameOverText()
+    private void SetTimeOverText()
     {
-        timerText.text = "time over";
+        timerText.text = "GAME OVER";
     }
 }

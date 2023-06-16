@@ -6,6 +6,7 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] private float duration;
 
+    private Coroutine timerCoroutine;
     private float timeRemaining;
     private bool isTimeOver;
 
@@ -13,7 +14,9 @@ public class Timer : MonoBehaviour
     public float TimeRemaining { get { return timeRemaining; } }
     public bool IsTimeOver { get { return isTimeOver; } }
 
-    public static event Action OnTimeOver;
+    public static event Action OnTimerStart;
+    public static event Action<float, float> OnTimerWorking;
+    public static event Action OnTimerFinish;
 
     private void Awake()
     {
@@ -22,35 +25,45 @@ public class Timer : MonoBehaviour
 
     private void OnEnable()
     {
-        StartGameManager.OnStartGame += StartTimer;
+        StartTimerButton.OnStartTimerButtonClicked += StartTimer;
+        ContinueTimerButton.OnContinueTimerButtonClicked += ContinueTimer;
+        StopTimerButton.OnStopTimerButtonClicked += StopTimer;
     }
 
     private void OnDisable()
     {
-        StartGameManager.OnStartGame -= StartTimer;
+        StartTimerButton.OnStartTimerButtonClicked -= StartTimer;
+        ContinueTimerButton.OnContinueTimerButtonClicked -= ContinueTimer;
+        StopTimerButton.OnStopTimerButtonClicked -= StopTimer;
     }
 
     public void StartTimer()
     {
         isTimeOver = false;
         timeRemaining = duration;
-        StartCoroutine(StartTimerCoroutine());
+        OnTimerStart?.Invoke();
+        timerCoroutine = StartCoroutine(StartTimerCoroutine());
     }
 
     public void StopTimer()
     {
-        StopCoroutine(StartTimerCoroutine());
+        if (timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
     }
 
     public void ContinueTimer()
     {
-        StartCoroutine(StartTimerCoroutine());
+        timerCoroutine = StartCoroutine(StartTimerCoroutine());
     }
 
     private IEnumerator StartTimerCoroutine()
     {
-        while (timeRemaining >= 1f)
+        while (timeRemaining >= 0f)
         {
+            OnTimerWorking?.Invoke(timeRemaining, duration);
             timeRemaining -= Time.deltaTime;
             yield return null;
         }
@@ -61,16 +74,16 @@ public class Timer : MonoBehaviour
     private void TimeOver()
     {
         isTimeOver = true;
-        OnTimeOver?.Invoke();
+        OnTimerFinish?.Invoke();
     }
 
-    public bool IsMoreThanSomeTimeLeft(float time)
+    public bool IsMoreThanSomeTimeLeft(float seconds)
     {
-        return timeRemaining > time;
+        return timeRemaining > seconds;
     }
 
-    public bool IsLessThanSomeTimeLeft(float time)
+    public bool IsLessThanSomeTimeLeft(float seconds)
     {
-        return timeRemaining < time;
+        return timeRemaining < seconds;
     }
 }
