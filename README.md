@@ -11,7 +11,7 @@ By default :hourglass: is 300f (5 min).
   
 Now you can use Timer in any script by Timer events, which are described below.  
 You can also implement singletone pattern to use only one timer in your game.   
-Learn this see here: https://github.com/chugaister228/unity-singleton-pattern-implementation
+Learn this here: https://github.com/chugaister228/unity-singleton-pattern-implementation
 
 UI implementations have two scripts - *TimerText.cs* and *TimerProgress.cs*  
 (to make reverse progress click isReverse in the Inspector)  
