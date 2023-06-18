@@ -9,9 +9,7 @@ All UI implementations are working with one timer, but you can make more.
 Create empty GameObject and attach *Timer.cs* script, paste the seconds duration float in the inspector.  
 By default :hourglass: is 300f (5 min).
   
-Now you can use Timer in any file: *[SerializeFiled] private Timer timer*;   
-Base methods: *timer.StartTimer(), timer.StopTimer(), timer.ContinueTimer()*.  
-
+Now you can use Timer in any script by Timer events, which are described below.  
 You can also implement singletone patter to use only one timer in your game.  
 
 UI implementations have two scripts - *TimerText.cs* and *TimerProgress.cs*  
@@ -22,7 +20,7 @@ Events work instead of dependencies to optimize the Timer and SOLID following.
 
 ---
 
-### Other features  
+### Features    
 Properties:  
 *timer.Duration* - returns general time to time over  
 *timer.TimeRemaining* - returns time left to time over  
